@@ -40,11 +40,11 @@ function Home() {
 }
 const App = () => {
   return (
-    <AuthProvider>
-      <Provider store={store}>
+    <Provider store={store}>
+      <AuthProvider>
         <Main />
-      </Provider>
-    </AuthProvider>
+      </AuthProvider>
+    </Provider>
   );
 };
 
