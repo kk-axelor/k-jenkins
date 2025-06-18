@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Product } from "./ShoppingCartSlice";
 import rest from "../../rest/rest";
+import { LIMIT } from "../../constant";
 
 interface ProductState {
   items: Product[];
@@ -10,8 +11,8 @@ interface ProductState {
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async () => {
-    const response = await rest.get("/products/category/smartphones"); // Replace with your actual API endpoint
+  async ({ skip }: { skip: number }) => {
+    const response = await rest.get(`/products/?limit=${LIMIT}&skip=${skip}`); // Replace with your actual API endpoint
     return response.data;
   }
 );
@@ -38,7 +39,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = action.payload.products;
+        state.items = [...state.items, ...action.payload.products];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = "failed";

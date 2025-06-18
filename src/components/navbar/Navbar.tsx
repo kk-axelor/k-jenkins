@@ -6,7 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 
 import "./navbar.scss";
 import { toogleCart } from "../../redux/slices/ShoppingCartSlice";
+import { AppDispatch } from "../../redux/store";
 
+import "./navbar.scss";
 const Navbar: React.FC = () => {
   const { items } = useAppSelector((state) => state.shoppingCart);
   const dispatch = useAppDispatch();
@@ -27,12 +29,7 @@ const Navbar: React.FC = () => {
         <Link to="/shopping" className="navbar-item">
           Shop
         </Link>
-        <span
-          className="navbar-item cart-icon"
-          onClick={() => dispatch(toogleCart())}
-        >
-          Cart ({cartItemCount})
-        </span>
+        <CartBtn dispatch={dispatch} cartItemCount={cartItemCount} />
       </div>
       <div className="navbar-end">
         {user ? (
@@ -49,6 +46,23 @@ const Navbar: React.FC = () => {
         )}
       </div>
     </nav>
+  );
+};
+
+const CartBtn = ({
+  dispatch,
+  cartItemCount,
+}: {
+  dispatch: AppDispatch;
+  cartItemCount: number;
+}) => {
+  return (
+    <button
+      className="navbar-item cart-btn"
+      onClick={() => dispatch(toogleCart())}
+    >
+      Cart ({cartItemCount})
+    </button>
   );
 };
 
