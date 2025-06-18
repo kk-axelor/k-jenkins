@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Product {
   id: number;
-  name: string;
+  title: string;
   price: number;
   description: string;
-  image: string;
+  thumbnail: string;
 }
 
 interface CartItem {
@@ -16,11 +16,13 @@ interface CartItem {
 interface ShoppingCartState {
   items: CartItem[];
   total: number;
+  isOpen: boolean;
 }
 
 const initialState: ShoppingCartState = {
   items: [],
   total: 0,
+  isOpen: false,
 };
 
 const calculateTotal = (items: CartItem[]): number => {
@@ -68,9 +70,23 @@ const shoppingCartSlice = createSlice({
     clearCart: (state) => {
       return initialState;
     },
+    removeProduct: (state, action: PayloadAction<{ productId: number }>) => {
+      state.items = state.items.filter(
+        (item) => item.product.id !== action.payload.productId
+      );
+      state.total = calculateTotal(state.items);
+    },
+    toogleCart: (state) => {
+      state.isOpen = !state.isOpen;
+    },
   },
 });
 
-export const { addToCart, updateQuantity, clearCart } =
-  shoppingCartSlice.actions;
+export const {
+  addToCart,
+  updateQuantity,
+  clearCart,
+  toogleCart,
+  removeProduct,
+} = shoppingCartSlice.actions;
 export default shoppingCartSlice.reducer;

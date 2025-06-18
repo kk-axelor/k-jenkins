@@ -1,45 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Product } from "./ShoppingCartSlice";
+import rest from "../../rest/rest";
 
 interface ProductState {
   items: Product[];
-  loading: boolean;
   error: string | null;
+  status: "idle" | "loading" | "succeeded" | "failed";
 }
 
+export const fetchProducts = createAsyncThunk(
+  "products/fetchProducts",
+  async () => {
+    const response = await rest.get("/products/category/smartphones"); // Replace with your actual API endpoint
+    return response.data;
+  }
+);
+
 const initialState: ProductState = {
-  items: [
-    {
-      id: 1,
-      name: "Smartphone",
-      price: 699.99,
-      description: "Latest model with high-resolution camera",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 2,
-      name: "Laptop",
-      price: 1299.99,
-      description: "Powerful laptop for work and gaming",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 3,
-      name: "Headphones",
-      price: 199.99,
-      description: "Noise-cancelling wireless headphones",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 4,
-      name: "Smartwatch",
-      price: 249.99,
-      description: "Track your fitness and stay connected",
-      image: "https://via.placeholder.com/150",
-    },
-  ],
-  loading: false,
+  items: [],
   error: null,
+  status: "idle",
 };
 
 const productSlice = createSlice({
@@ -49,6 +29,21 @@ const productSlice = createSlice({
     addProduct: (state) => {
       return state;
     },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.items = action.payload.products;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "An error occurred";
+      });
   },
 });
 

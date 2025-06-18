@@ -1,9 +1,28 @@
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addToCart } from "../../redux/slices/ShoppingCartSlice";
+import { fetchProducts } from "../../redux/slices/ProductSlice";
 
 const ProductList = () => {
   const products = useAppSelector((state) => state.product.items);
+  const productStatus = useAppSelector((state) => state.product.status);
+  const error = useAppSelector((state) => state.product.error);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (productStatus === "idle") {
+      dispatch(fetchProducts());
+    }
+  }, [productStatus, dispatch]);
+
+  if (productStatus === "loading") {
+    return <div>Loading products...</div>;
+  }
+
+  if (productStatus === "failed") {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div>
       <div className="product-list" data-testid="product-list">
@@ -15,10 +34,12 @@ const ProductList = () => {
               className="product-card"
               data-testid="product-item"
             >
-              <img src={product.image} alt={product.name} />
-              <h3>{product.name}</h3>
+              <div className="product-image-wrapper">
+                <img src={product.thumbnail} alt={product.title} />
+              </div>
+              <h3 className="product-card-title">{product.title}</h3>
               <p>${product.price.toFixed(2)}</p>
-              <p>{product.description}</p>
+              <p className="product-card-description">{product.description}</p>
               <button
                 onClick={() => dispatch(addToCart(product))}
                 data-testid={`add-to-cart-${product.id}`}
