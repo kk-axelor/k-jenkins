@@ -1,0 +1,76 @@
+// ProductSearch Component Styles
+$primary-color: #6c5ce7;
+$border-radius: 12px;
+$transition: all 0.3s ease;
+
+.product-search {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.9rem 1rem 0.9rem 1.2rem;
+    border: 2px solid #eee;
+    border-radius: $border-radius;
+    font-size: 1rem;
+    transition: $transition;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 4px 15px rgba(108, 92, 231, 0.15);
+    }
+    
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+  
+  .search-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: $transition;
+    
+    &:hover {
+      background-color: rgba(108, 92, 231, 0.1);
+    }
+  }
+  
+  .search-icon {
+    width: 24px;
+    height: 24px;
+    fill: $primary-color;
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    max-width: 100%;
+    
+    .search-input {
+      padding: 0.8rem;
+      font-size: 0.9rem;
+    }
+    
+    .search-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

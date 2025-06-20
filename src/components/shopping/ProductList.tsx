@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addToCart } from "../../redux/slices/ShoppingCartSlice";
+import { addToCart, Product } from "../../redux/slices/ShoppingCartSlice";
 import { fetchProducts } from "../../redux/slices/ProductSlice";
 import { useOnScroll } from "../../hooks/useOnScroll";
 // @ts-ignore
 import confetti from "canvas-confetti";
-import { stat } from "fs";
+import ProductSearch from "../productSearch/ProductSearch";
 
 const fireConfetti = () => {
   confetti({
@@ -16,22 +16,25 @@ const fireConfetti = () => {
 };
 
 const ProductList = () => {
-  const products = useAppSelector((state) => state.product.items);
+  const { items: products, searchQuery } = useAppSelector(
+    (state) => state.product
+  );
   const total = useAppSelector((state) => state.shoppingCart.total);
   const productStatus = useAppSelector((state) => state.product.status);
   const error = useAppSelector((state) => state.product.error);
+  const { scrollRef, fetchMore, setFetchMore } = useOnScroll();
+
   const [skip, setSkip] = useState(0);
   const dispatch = useAppDispatch();
-  const { scrollRef, fetchMore, setFetchMore } = useOnScroll();
 
   useEffect(() => {
     console.log("Initial load");
     dispatch(fetchProducts({ skip: 0 }));
-  }, [dispatch]);
+    setSkip(0);
+  }, [dispatch, searchQuery]);
 
   useEffect(() => {
     if (fetchMore && productStatus !== "loading") {
-      console.log("Loading more data, skip:", skip + 10);
       dispatch(fetchProducts({ skip: skip + 10 }));
       setSkip((prevSkip) => prevSkip + 10);
       setFetchMore(false);
@@ -42,12 +45,16 @@ const ProductList = () => {
   if (productStatus === "failed") {
     return <div>Error: {error}</div>;
   }
+
   return (
     <div>
       <div className="product-list" data-testid="product-list">
-        <h2>Available Products</h2>
+        <div className="flex gap-2 justify-between">
+          <h2>Available Products</h2>
+          <ProductSearch />
+        </div>
         <div className="products-grid">
-          {products.map((product) => (
+          {products.map((product: Product) => (
             <div
               key={product.id}
               className="product-card"

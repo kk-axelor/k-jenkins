@@ -72,7 +72,7 @@ function Home() {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
-          <h1>Summer Collection 2023</h1>
+          <h1>Summer Collection 2025</h1>
           <p>Discover timeless elegance with our new arrivals</p>
           <button className="cta-button">Shop Now</button>
         </div>

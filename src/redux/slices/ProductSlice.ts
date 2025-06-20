@@ -1,18 +1,31 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "./ShoppingCartSlice";
 import rest from "../../rest/rest";
+import { processUrl } from "../../utils";
 import { LIMIT } from "../../constant";
+import { RootState } from "../store";
 
 interface ProductState {
   items: Product[];
   error: string | null;
+  searchQuery: string;
   status: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async ({ skip }: { skip: number }) => {
-    const response = await rest.get(`/products/?limit=${LIMIT}&skip=${skip}`); // Replace with your actual API endpoint
+  async ({ skip }: { skip: number }, { getState }) => {
+    const { product } = getState() as RootState;
+
+    const url = processUrl(
+      product.searchQuery ? "/products/search/" : "/products",
+      {
+        skip: skip,
+        q: product.searchQuery,
+        limit: LIMIT,
+      }
+    );
+    const response = await rest.get(url);
     return response.data;
   }
 );
@@ -21,6 +34,7 @@ const initialState: ProductState = {
   items: [],
   error: null,
   status: "idle",
+  searchQuery: "",
 };
 
 const productSlice = createSlice({
@@ -29,6 +43,9 @@ const productSlice = createSlice({
   reducers: {
     addProduct: (state) => {
       return state;
+    },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
     },
   },
 
@@ -39,7 +56,8 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = [...state.items, ...action.payload.products];
+        if (state.searchQuery) state.items = action.payload.products;
+        else state.items = [...state.items, ...action.payload.products];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = "failed";
@@ -48,5 +66,5 @@ const productSlice = createSlice({
   },
 });
 
-export const { addProduct } = productSlice.actions;
+export const { addProduct, setSearchQuery } = productSlice.actions;
 export default productSlice.reducer;
