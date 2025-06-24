@@ -37,13 +37,15 @@ describe("ShoppingCart Component", () => {
     const store = createTestStore();
 
     store.dispatch(
-      addToCart({
-        id: 1,
-        name: "Smartphone",
-        price: 699.99,
-        description: "Latest model with high-resolution camera",
-        image: "https://via.placeholder.com/150",
-      })
+      addToCart(
+        expect.objectContaining({
+          id: 1,
+          title: "Smartphone",
+          price: 699.99,
+          description: "Latest model with high-resolution camera",
+          thumbnail: "https://via.placeholder.com/150",
+        })
+      )
     );
     renderWithRedux(store);
 
@@ -58,13 +60,15 @@ describe("ShoppingCart Component", () => {
     const user = userEvent.setup();
     const store = createTestStore();
     store.dispatch(
-      addToCart({
-        id: 1,
-        name: "Smartphone",
-        price: 699.99,
-        description: "Latest model with high-resolution camera",
-        image: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      })
+      addToCart(
+        expect.objectContaining({
+          id: 1,
+          title: "Smartphone",
+          price: 699.99,
+          description: "Latest model with high-resolution camera",
+          thumbnail: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        })
+      )
     );
     renderWithRedux(store);
 
@@ -83,22 +87,22 @@ describe("ShoppingCart Component", () => {
 
     // Add multiple items to the cart
     store.dispatch(
-      addToCart({
+      expect.objectContaining({
         id: 1,
-        name: "Smartphone",
+        title: "Smartphone",
         price: 699.99,
         description: "Latest model with high-resolution camera",
-        image: "https://via.placeholder.com/150",
+        thumbnail: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       })
     );
 
     store.dispatch(
-      addToCart({
-        id: 2,
-        name: "Laptop",
-        price: 1299.99,
-        description: "Powerful laptop for work and gaming",
-        image: "https://via.placeholder.com/150",
+      expect.objectContaining({
+        id: 1,
+        title: "Smartphone",
+        price: 699.99,
+        description: "Latest model with high-resolution camera",
+        thumbnail: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       })
     );
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addToCart, Product } from "../../redux/slices/ShoppingCartSlice";
 import { fetchProducts } from "../../redux/slices/ProductSlice";
@@ -16,9 +17,11 @@ const fireConfetti = () => {
 };
 
 const ProductList = () => {
-  const { items: products, searchQuery } = useAppSelector(
-    (state) => state.product
-  );
+  const {
+    items: products,
+    searchQuery,
+    status,
+  } = useAppSelector((state) => state.product);
   const total = useAppSelector((state) => state.shoppingCart.total);
   const productStatus = useAppSelector((state) => state.product.status);
   const error = useAppSelector((state) => state.product.error);
@@ -26,6 +29,7 @@ const ProductList = () => {
 
   const [skip, setSkip] = useState(0);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Initial load");
@@ -54,29 +58,50 @@ const ProductList = () => {
           <ProductSearch />
         </div>
         <div className="products-grid">
-          {products.map((product: Product) => (
-            <div
-              key={product.id}
-              className="product-card"
-              data-testid="product-item"
-            >
-              <div className="product-image-wrapper">
-                <img src={product.thumbnail} alt={product.title} />
-              </div>
-              <h3 className="product-card-title">{product.title}</h3>
-              <p>${product.price.toFixed(2)}</p>
-              <p className="product-card-description">{product.description}</p>
-              <button
-                onClick={() => {
-                  dispatch(addToCart(product));
-                  total === 0 && fireConfetti();
-                }}
-                data-testid={`add-to-cart-${product.id}`}
-              >
-                Add to Cart
-              </button>
+          {products.length > 0 ? (
+            <>
+              {products.map((product: Product) => (
+                <div
+                  key={product.id}
+                  className="product-card"
+                  data-testid="product-item"
+                >
+                  <div
+                    className="product-image-wrapper"
+                    onClick={() => navigate(`/product/${product.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <img src={product.thumbnail} alt={product.title} />
+                  </div>
+                  <h3
+                    className="product-card-title"
+                    onClick={() => navigate(`/product/${product.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {product.title}
+                  </h3>
+                  <p>${product.price.toFixed(2)}</p>
+                  <p className="product-card-description">
+                    {product.description}
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(addToCart(product));
+                      total === 0 && fireConfetti();
+                    }}
+                    data-testid={`add-to-cart-${product.id}`}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="text-center">
+              {status !== "loading" && <p> No products found</p>}
             </div>
-          ))}
+          )}
         </div>
         <div>{productStatus === "loading" && <p>loading...</p>}</div>
       </div>

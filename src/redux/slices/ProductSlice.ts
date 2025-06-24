@@ -7,6 +7,7 @@ import { RootState } from "../store";
 
 interface ProductState {
   items: Product[];
+  selectedProduct: Product | null;
   error: string | null;
   searchQuery: string;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -30,8 +31,17 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductById = createAsyncThunk(
+  "products/fetchProductById",
+  async (id: number) => {
+    const response = await rest.get(`/products/${id}`);
+    return response.data;
+  }
+);
+
 const initialState: ProductState = {
   items: [],
+  selectedProduct: null,
   error: null,
   status: "idle",
   searchQuery: "",
@@ -60,6 +70,18 @@ const productSlice = createSlice({
         else state.items = [...state.items, ...action.payload.products];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "An error occurred";
+      })
+      .addCase(fetchProductById.pending, (state) => {
+        state.status = "loading";
+        state.selectedProduct = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.selectedProduct = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "An error occurred";
       });
