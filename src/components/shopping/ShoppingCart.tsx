@@ -35,7 +35,6 @@ const ShoppingCart = () => {
           </div>
         ) : (
           <>
-            {" "}
             <h2>Your Shopping Cart</h2>
             <ul className="cart-items">
               {items.map((item) => (

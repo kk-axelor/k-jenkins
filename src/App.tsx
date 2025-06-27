@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import "./App.css";
 import { useState } from "react";
 
@@ -53,9 +54,7 @@ function Home() {
         <div className="logo">ELEGANCE</div>
         <div className="search-bar">
           <input type="text" placeholder="Search products..." />
-          <button>
-            <i className="search-icon">🔍</i>
-          </button>
+          <Search className="text-primary cursor-pointer" />
         </div>
         <div className="nav-links">
           <a href="#men">Men</a>

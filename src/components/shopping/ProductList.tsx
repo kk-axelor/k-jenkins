@@ -53,7 +53,7 @@ const ProductList = () => {
   return (
     <div>
       <div className="product-list" data-testid="product-list">
-        <div className="flex gap-2 justify-between">
+        <div className="flex gap-2 justify-between product-list-header">
           <h2>Available Products</h2>
           <ProductSearch />
         </div>

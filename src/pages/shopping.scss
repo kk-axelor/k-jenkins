@@ -61,7 +61,7 @@ $transition: all 0.3s ease;
 }
 .shopping-cart-container {
   position: sticky;
-  top: 50px;
+  top: 220px;
   width: 500px;
   border-radius: 10px;
   overflow: hidden;
@@ -76,6 +76,22 @@ $transition: all 0.3s ease;
 // Product List Styles
 .product-list {
   flex: 2;
+  padding-top: 150px;
+  position: relative;
+
+  .product-list-header {
+    z-index: 1000;
+    padding: 10px;
+    padding-top: 20px;
+    width: 100%;
+    position: fixed;
+    top: 50px;
+    left: 0px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   h2 {
     font-size: 1.8rem;
@@ -143,10 +159,8 @@ $transition: all 0.3s ease;
 // Shopping Cart Styles
 .shopping-cart {
   flex: 1;
-  background-color: white;
   border-radius: $border-radius;
   padding: 1.5rem;
-  box-shadow: $box-shadow;
   position: sticky;
   top: 2rem;
 
