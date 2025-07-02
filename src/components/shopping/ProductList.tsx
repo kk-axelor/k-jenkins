@@ -19,13 +19,13 @@ const fireConfetti = () => {
 const ProductList = () => {
   const {
     items: products,
+    status: productStatus,
     searchQuery,
-    status,
   } = useAppSelector((state) => state.product);
   const total = useAppSelector((state) => state.shoppingCart.total);
-  const productStatus = useAppSelector((state) => state.product.status);
   const error = useAppSelector((state) => state.product.error);
   const { scrollRef, fetchMore, setFetchMore } = useOnScroll();
+  const item = useAppSelector((state) => state.product);
 
   const [skip, setSkip] = useState(0);
   const dispatch = useAppDispatch();
@@ -35,10 +35,10 @@ const ProductList = () => {
     console.log("Initial load");
     dispatch(fetchProducts({ skip: 0 }));
     setSkip(0);
-  }, [dispatch, searchQuery]);
+  }, [dispatch]);
 
   useEffect(() => {
-    if (fetchMore && productStatus !== "loading") {
+    if (fetchMore && productStatus !== "loading" && !searchQuery) {
       dispatch(fetchProducts({ skip: skip + 10 }));
       setSkip((prevSkip) => prevSkip + 10);
       setFetchMore(false);
@@ -58,49 +58,52 @@ const ProductList = () => {
           <ProductSearch />
         </div>
         <div className="products-grid">
-          {products.length > 0 ? (
-            <>
-              {products.map((product: Product) => (
-                <div
-                  key={product.id}
-                  className="product-card"
-                  data-testid="product-item"
-                >
-                  <div
-                    className="product-image-wrapper"
-                    onClick={() => navigate(`/product/${product.id}`)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <img src={product.thumbnail} alt={product.title} />
-                  </div>
-                  <h3
-                    className="product-card-title"
-                    onClick={() => navigate(`/product/${product.id}`)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {product.title}
-                  </h3>
-                  <p>${product.price.toFixed(2)}</p>
-                  <p className="product-card-description">
-                    {product.description}
-                  </p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      dispatch(addToCart(product));
-                      total === 0 && fireConfetti();
-                    }}
-                    data-testid={`add-to-cart-${product.id}`}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              ))}
-            </>
+          {products.map((product: Product) => (
+            <div
+              key={product.id}
+              className="product-card"
+              data-testid="product-item"
+            >
+              <div
+                className="product-image-wrapper"
+                onClick={() => navigate(`/product/${product.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <img src={product.thumbnail} alt={product.title} />
+              </div>
+              <h3
+                className="product-card-title"
+                onClick={() => navigate(`/product/${product.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                {product.title}
+              </h3>
+              <p>${product.price.toFixed(2)}</p>
+              <p className="product-card-description">{product.description}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch(addToCart(product));
+                  total === 0 && fireConfetti();
+                }}
+                data-testid={`add-to-cart-${product.id}`}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
+          {/* {products.length > 0 ? (
+            <></>
           ) : (
             <div className="text-center">
               {status !== "loading" && <p> No products found</p>}
             </div>
+          )} */}
+        </div>
+
+        <div>
+          {productStatus === "succeeded" && products.length === 0 && (
+            <p>No Product found</p>
           )}
         </div>
         <div>{productStatus === "loading" && <p>loading...</p>}</div>

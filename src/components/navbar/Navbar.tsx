@@ -13,7 +13,6 @@ const Navbar: React.FC = () => {
   const { items } = useAppSelector((state) => state.shoppingCart);
   const dispatch = useAppDispatch();
   const { user, logout } = useAuth();
-  console.log(user);
 
   const cartItemCount = items.length;
 

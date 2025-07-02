@@ -2,7 +2,12 @@ import React, { use, useEffect, useState } from "react";
 import "./productSearch.scss";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useAppDispatch } from "../../redux/hooks";
-import { setSearchQuery } from "../../redux/slices/ProductSlice";
+import {
+  clearProductList,
+  fetchProductByQuery,
+  fetchProducts,
+  updateSearchQuery,
+} from "../../redux/slices/ProductSlice";
 
 const ProductSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,12 +15,17 @@ const ProductSearch = () => {
   const dispatch = useAppDispatch();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    setSearchTerm(e.target.value.trim());
   };
 
   useEffect(() => {
-    console.log("Search term changed", debouceText);
-    dispatch(setSearchQuery(debouceText));
+    dispatch(updateSearchQuery(debouceText));
+    if (debouceText.trim() === "") {
+      dispatch(clearProductList());
+      dispatch(fetchProducts({ skip: 0 }));
+    } else {
+      dispatch(fetchProductByQuery(debouceText));
+    }
   }, [debouceText]);
 
   return (

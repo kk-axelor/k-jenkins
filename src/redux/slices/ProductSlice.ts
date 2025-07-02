@@ -4,28 +4,28 @@ import rest from "../../rest/rest";
 import { processUrl } from "../../utils";
 import { LIMIT } from "../../constant";
 import { RootState } from "../store";
+import { stat } from "fs";
 
+type ProductCache = {
+  data: Product[];
+  lastFetched: number;
+};
 interface ProductState {
   items: Product[];
-  selectedProduct: Product | null;
   error: string | null;
-  searchQuery: string;
   status: "idle" | "loading" | "succeeded" | "failed";
+  selectedProduct: Product | null;
+  queries: Record<string, ProductCache>;
+  searchQuery: string | null;
 }
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async ({ skip }: { skip: number }, { getState }) => {
-    const { product } = getState() as RootState;
-
-    const url = processUrl(
-      product.searchQuery ? "/products/search/" : "/products",
-      {
-        skip: skip,
-        q: product.searchQuery,
-        limit: LIMIT,
-      }
-    );
+    const url = processUrl("/products", {
+      skip: skip,
+      limit: LIMIT,
+    });
     const response = await rest.get(url);
     return response.data;
   }
@@ -39,12 +39,32 @@ export const fetchProductById = createAsyncThunk(
   }
 );
 
+export const fetchProductByQuery = createAsyncThunk(
+  "products/fetchProductByQuery",
+  async (query: string, { getState }) => {
+    const { product } = getState() as RootState;
+    const q: Record<string, ProductCache> = product.queries || {};
+    if (q[query])
+      return {
+        query,
+        products: q[query].data,
+        lastFetched: q[query].lastFetched,
+      };
+
+    const url = processUrl("/products/search/", { q: query });
+    const response = await rest.get(url);
+    const data = response.data;
+    return { query, products: data.products || [], lastFetched: Date.now() };
+  }
+);
+
 const initialState: ProductState = {
   items: [],
   selectedProduct: null,
   error: null,
   status: "idle",
-  searchQuery: "",
+  queries: {},
+  searchQuery: null,
 };
 
 const productSlice = createSlice({
@@ -54,8 +74,20 @@ const productSlice = createSlice({
     addProduct: (state) => {
       return state;
     },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
+    clearProductList: (state) => {
+      return {
+        ...state,
+        items: [],
+        status: "idle",
+        selectedProduct: null,
+        error: null,
+      };
+    },
+    cleanedQueries: (state, action) => {
+      return { ...state, queries: action.payload };
+    },
+    updateSearchQuery: (state, action) => {
+      return { ...state, searchQuery: action.payload };
     },
   },
 
@@ -66,8 +98,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        if (state.searchQuery) state.items = action.payload.products;
-        else state.items = [...state.items, ...action.payload.products];
+        state.items = [...state.items, ...action.payload.products];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = "failed";
@@ -84,9 +115,27 @@ const productSlice = createSlice({
       .addCase(fetchProductById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "An error occurred";
+      })
+      .addCase(fetchProductByQuery.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProductByQuery.fulfilled, (state, action) => {
+        const { query, products, lastFetched } = action.payload;
+        state.queries[query] = { data: products, lastFetched };
+        state.items = products;
+        state.status = "succeeded";
       });
+    builder.addCase(fetchProductByQuery.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message || "An error occurred";
+    });
   },
 });
 
-export const { addProduct, setSearchQuery } = productSlice.actions;
+export const {
+  addProduct,
+  clearProductList,
+  cleanedQueries,
+  updateSearchQuery,
+} = productSlice.actions;
 export default productSlice.reducer;
