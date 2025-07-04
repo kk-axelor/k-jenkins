@@ -25,7 +25,6 @@ const ProductList = () => {
   const total = useAppSelector((state) => state.shoppingCart.total);
   const error = useAppSelector((state) => state.product.error);
   const { scrollRef, fetchMore, setFetchMore } = useOnScroll();
-  const item = useAppSelector((state) => state.product);
 
   const [skip, setSkip] = useState(0);
   const dispatch = useAppDispatch();

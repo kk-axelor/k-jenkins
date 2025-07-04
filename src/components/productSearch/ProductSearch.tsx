@@ -20,8 +20,8 @@ const ProductSearch = () => {
 
   useEffect(() => {
     dispatch(updateSearchQuery(debouceText));
+    dispatch(clearProductList());
     if (debouceText.trim() === "") {
-      dispatch(clearProductList());
       dispatch(fetchProducts({ skip: 0 }));
     } else {
       dispatch(fetchProductByQuery(debouceText));

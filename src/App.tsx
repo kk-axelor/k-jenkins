@@ -1,60 +1,31 @@
 import { Search } from "lucide-react";
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { RootState } from "./redux/store";
+import { SearchBar } from "./components/searchBar/SearchBar";
+import { newArrivals, testimonials } from "./data";
+import { fetchProductCategories } from "./redux/slices/ProductSlice";
 
 function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const dispatch = useAppDispatch();
 
-  // Sample data for new arrivals
-  const newArrivals = [
-    {
-      id: 1,
-      name: "Minimalist Tote Bag",
-      price: "$45.00",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 2,
-      name: "Classic White Sneakers",
-      price: "$65.00",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 3,
-      name: "Linen Summer Dress",
-      price: "$78.00",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 4,
-      name: "Slim Fit Jeans",
-      price: "$59.00",
-      image: "https://via.placeholder.com/150",
-    },
-  ];
+  const no_of_item = useAppSelector(
+    (state: RootState) => state.shoppingCart.items?.length || 0
+  );
 
-  // Sample testimonials
-  const testimonials = [
-    {
-      id: 1,
-      text: "Absolutely love the quality and style of everything I've purchased!",
-      author: "Sarah M.",
-    },
-    {
-      id: 2,
-      text: "Fast shipping and the products exceed my expectations every time.",
-      author: "James L.",
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchProductCategories());
+  }, [dispatch]);
 
   return (
     <div className="home-container">
       {/* Navigation Bar */}
       <nav className="navbar">
         <div className="logo">ELEGANCE</div>
-        <div className="search-bar">
-          <input type="text" placeholder="Search products..." />
-          <Search className="text-primary cursor-pointer" />
+        <div>
+          <SearchBar />
         </div>
         <div className="nav-links">
           <a href="#men">Men</a>
@@ -64,7 +35,7 @@ function Home() {
         </div>
         <div className="cart-icon">
           <span>🛒</span>
-          <span className="cart-count">0</span>
+          <span className="cart-count">{no_of_item}</span>
         </div>
       </nav>
 

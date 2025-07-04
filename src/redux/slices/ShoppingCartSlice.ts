@@ -47,12 +47,14 @@ interface CartItem {
 
 interface ShoppingCartState {
   items: CartItem[];
+  likeItems: Array<Number>;
   total: number;
   isOpen: boolean;
 }
 
 const initialState: ShoppingCartState = {
   items: [],
+  likeItems: [],
   total: 0,
   isOpen: false,
 };
@@ -110,6 +112,9 @@ const shoppingCartSlice = createSlice({
     },
     toogleCart: (state) => {
       state.isOpen = !state.isOpen;
+    },
+    addToLikeCategory: (state, action) => {
+      state.likeItems.push(action.payload.id);
     },
   },
 });

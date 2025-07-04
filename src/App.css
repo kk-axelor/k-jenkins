@@ -53,30 +53,6 @@ a:hover {
   letter-spacing: 2px;
 }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 25px;
-  padding: 8px 15px;
-  width: 300px;
-}
-
-.search-bar input {
-  border: none;
-  background: transparent;
-  width: 100%;
-  padding: 5px;
-  outline: none;
-  font-size: 14px;
-}
-
-.search-bar button {
-  background: transparent;
-  padding: 0;
-  margin-left: 10px;
-}
-
 .nav-links {
   display: flex;
   gap: 25px;
@@ -179,7 +155,7 @@ a:hover {
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
 }
 

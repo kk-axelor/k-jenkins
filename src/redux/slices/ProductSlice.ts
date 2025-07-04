@@ -4,11 +4,15 @@ import rest from "../../rest/rest";
 import { processUrl } from "../../utils";
 import { LIMIT } from "../../constant";
 import { RootState } from "../store";
-import { stat } from "fs";
 
 type ProductCache = {
   data: Product[];
   lastFetched: number;
+};
+type ProductCategory = {
+  slug: string;
+  name: string;
+  url: string;
 };
 interface ProductState {
   items: Product[];
@@ -17,6 +21,7 @@ interface ProductState {
   selectedProduct: Product | null;
   queries: Record<string, ProductCache>;
   searchQuery: string | null;
+  productCategories: ProductCategory[];
 }
 
 export const fetchProducts = createAsyncThunk(
@@ -58,6 +63,15 @@ export const fetchProductByQuery = createAsyncThunk(
   }
 );
 
+export const fetchProductCategories = createAsyncThunk(
+  "products/fetchProductCategories",
+  async () => {
+    const res = await rest("/products/categories");
+    const data = res.data;
+    return data;
+  }
+);
+
 const initialState: ProductState = {
   items: [],
   selectedProduct: null,
@@ -65,6 +79,7 @@ const initialState: ProductState = {
   status: "idle",
   queries: {},
   searchQuery: null,
+  productCategories: [],
 };
 
 const productSlice = createSlice({
@@ -124,11 +139,14 @@ const productSlice = createSlice({
         state.queries[query] = { data: products, lastFetched };
         state.items = products;
         state.status = "succeeded";
+      })
+      .addCase(fetchProductByQuery.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "An error occurred";
+      })
+      .addCase(fetchProductCategories.fulfilled, (state, action) => {
+        state.productCategories = action.payload;
       });
-    builder.addCase(fetchProductByQuery.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message || "An error occurred";
-    });
   },
 });
 
