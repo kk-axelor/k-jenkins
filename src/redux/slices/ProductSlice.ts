@@ -14,7 +14,7 @@ type ProductCategory = {
   name: string;
   url: string;
 };
-interface ProductState {
+export interface ProductState {
   items: Product[];
   error: string | null;
   status: "idle" | "loading" | "succeeded" | "failed";

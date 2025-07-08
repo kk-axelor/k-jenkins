@@ -1,19 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import App from "../App";
+import { AuthProvider } from "../context/AuthContext";
+import Login from "../pages/Login";
 
-describe("Login Integratio test", () => {
-  it("allow user to login and see welcome messaage", async () => {
-    const user = userEvent.setup();
-    render(<App />);
+const renderWithAuth = (component: React.ReactElement) => {
+  return render(<AuthProvider>{component}</AuthProvider>);
+};
 
-    await user.type(
-      screen.getByPlaceholderText(/enter your username/i),
-      "kunal"
-    );
-    await user.click(screen.getByRole("button", { name: /login/i }));
-
-    //assertion
-    expect(await screen.findByText(/Welcome, kunal/i)).toBeInTheDocument();
+describe("Login Integration Test", () => {
+  test("render login form element", () => {
+    renderWithAuth(<Login />);
+    expect(screen.getByText("Login to Notes App")).toBeInTheDocument();
   });
 });

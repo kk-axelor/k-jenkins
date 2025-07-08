@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addToCart, Product } from "../../redux/slices/ShoppingCartSlice";
 import { fetchProducts } from "../../redux/slices/ProductSlice";
@@ -31,7 +31,6 @@ const ProductList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Initial load");
     dispatch(fetchProducts({ skip: 0 }));
     setSkip(0);
   }, [dispatch]);
@@ -57,6 +56,7 @@ const ProductList = () => {
     return <div>Error: {error}</div>;
   }
 
+  console.log(products);
   return (
     <div>
       <div className="product-list" data-testid="product-list">
@@ -85,7 +85,7 @@ const ProductList = () => {
               >
                 {product.title}
               </h3>
-              <p>${product.price.toFixed(2)}</p>
+              <p>${product.price?.toFixed(2)}</p>
               <p className="product-card-description">{product.description}</p>
               <button
                 onClick={(e) => {

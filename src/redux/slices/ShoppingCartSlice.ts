@@ -77,7 +77,7 @@ const shoppingCartSlice = createSlice({
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        state.items.push({ product: action.payload, quantity: 1 });
+        state.items.push({ product: action.payload as Product, quantity: 1 });
       }
       state.total = calculateTotal(state.items);
     },
