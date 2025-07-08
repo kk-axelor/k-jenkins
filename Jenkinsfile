@@ -2,45 +2,48 @@ pipeline {
   agent any
 
   tools {
-    nodejs "NodeJS_20"   // Name you set in Jenkins NodeJS tool config
+    nodejs "NodeJS_21"
   }
 
   stages {
-    stage('Checkout') {
+    
+    stage("Clean install dependencies") {
       steps {
-        git url: 'https://github.com/kk-axelor/k-jenkins.git'
+        echo "Cleaning node_modules and lock file"
+        sh "rm -rf node_modules package-lock.json"
       }
     }
 
-    stage('Install Dependencies') {
+    stage("Install Dependencies") {
       steps {
-        echo 'Installing Node.js dependencies...'
-        sh 'npm install'
+        echo "Installing dependencies..."
+        sh "npm install --legacy-peer-deps"
+        sh "npm i ajv@8.17.1 --legacy-peer-deps"
       }
     }
 
-    stage('Build') {
+    stage("Testing") {
       steps {
-        echo 'Building the project...'
-        sh 'npm run build'
+        echo "Running tests..."
+        sh "npm test -- --watchAll=false"
       }
     }
 
-    stage('Archive Build') {
+    stage("Build") {
       steps {
-        archiveArtifacts artifacts: 'build/**', fingerprint: true
+        echo "Building the project"
+        sh "npm run build"
       }
     }
 
-    // Optional: deploy stage
   }
 
   post {
     success {
-      echo '✅ Build and archive successful!'
+      echo "✅ Build passed"
     }
     failure {
-      echo '❌ Build failed.'
+      echo "❌ Build failed"
     }
   }
 }
