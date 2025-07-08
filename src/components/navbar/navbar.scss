@@ -3,13 +3,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: var(--text-secondary);
   color: white;
   padding: 0.5rem 1rem;
 }
 
 .navbar-brand a {
-  color: white;
+  color: var(--text-primary);
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
@@ -63,5 +63,10 @@
 }
 .cart-btn {
   all: unset;
+  cursor: pointer;
+}
+.theme-btn {
+  all: unset;
+  background-color: transparent;
   cursor: pointer;
 }

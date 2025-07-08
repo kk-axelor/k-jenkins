@@ -7,14 +7,17 @@ import Navbar from "./components/navbar/Navbar";
 import ShoppingPage from "./pages/Shopping";
 import Login from "./pages/Login";
 import ProductDescription from "./components/shopping/ProductDescription";
+import { ThemeContextProvider } from "./context/ThemeContext";
 
 const AppLayout = () => {
   return (
     <Provider store={store}>
-      <AuthProvider>
-        <Navbar />
-        <Outlet />
-      </AuthProvider>
+      <ThemeContextProvider>
+        <AuthProvider>
+          <Navbar />
+          <Outlet />
+        </AuthProvider>
+      </ThemeContextProvider>
     </Provider>
   );
 };

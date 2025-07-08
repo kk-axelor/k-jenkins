@@ -4,13 +4,17 @@ import { addToCart } from "../../redux/slices/ShoppingCartSlice";
 import { useEffect } from "react";
 import { fetchProductById } from "../../redux/slices/ProductSlice";
 import "./ProductDescription.scss";
+import { useTheme } from "../../hooks/useTheme";
 
 const ProductDescription = () => {
   const { id } = useParams<{ id: string }>();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
-  const { selectedProduct, status, error } = useAppSelector((state) => state.product);
+
+  const { selectedProduct, status, error } = useAppSelector(
+    (state) => state.product
+  );
 
   useEffect(() => {
     if (id) {
@@ -26,20 +30,30 @@ const ProductDescription = () => {
     return <div className="error">Error: {error || "Product not found"}</div>;
   }
 
-  const discountedPrice = selectedProduct.price * (1 - selectedProduct.discountPercentage / 100);
+  const discountedPrice =
+    selectedProduct.price * (1 - selectedProduct.discountPercentage / 100);
 
   return (
-    <div className="product-description">
+    <div className="product-description" data-theme={theme}>
       <button onClick={() => navigate(-1)} className="back-button">
         ← Back to Products
       </button>
-      
+
       <div className="product-detail-container">
         <div className="product-images">
-          <img src={selectedProduct.thumbnail} alt={selectedProduct.title} className="main-image" />
+          <img
+            src={selectedProduct.thumbnail}
+            alt={selectedProduct.title}
+            className="main-image"
+          />
           <div className="image-gallery">
             {selectedProduct.images?.map((image, index) => (
-              <img key={index} src={image} alt={`${selectedProduct.title} ${index + 1}`} className="gallery-image" />
+              <img
+                key={index}
+                src={image}
+                alt={`${selectedProduct.title} ${index + 1}`}
+                className="gallery-image"
+              />
             ))}
           </div>
         </div>
@@ -51,30 +65,49 @@ const ProductDescription = () => {
             <span>⭐ {selectedProduct.rating}</span>
             <span className="stock">Stock: {selectedProduct.stock}</span>
           </div>
-          
+
           <div className="pricing">
             <span className="current-price">${discountedPrice.toFixed(2)}</span>
             {selectedProduct.discountPercentage > 0 && (
               <>
-                <span className="original-price">${selectedProduct.price.toFixed(2)}</span>
-                <span className="discount">-{selectedProduct.discountPercentage}%</span>
+                <span className="original-price">
+                  ${selectedProduct.price.toFixed(2)}
+                </span>
+                <span className="discount">
+                  -{selectedProduct.discountPercentage}%
+                </span>
               </>
             )}
           </div>
 
           <p className="description">{selectedProduct.description}</p>
-          
+
           <div className="product-details">
-            <p><strong>Category:</strong> {selectedProduct.category}</p>
-            <p><strong>SKU:</strong> {selectedProduct.sku}</p>
-            <p><strong>Weight:</strong> {selectedProduct.weight}g</p>
-            <p><strong>Availability:</strong> {selectedProduct.availabilityStatus}</p>
-            <p><strong>Warranty:</strong> {selectedProduct.warrantyInformation}</p>
-            <p><strong>Shipping:</strong> {selectedProduct.shippingInformation}</p>
-            <p><strong>Return Policy:</strong> {selectedProduct.returnPolicy}</p>
+            <p>
+              <strong>Category:</strong> {selectedProduct.category}
+            </p>
+            <p>
+              <strong>SKU:</strong> {selectedProduct.sku}
+            </p>
+            <p>
+              <strong>Weight:</strong> {selectedProduct.weight}g
+            </p>
+            <p>
+              <strong>Availability:</strong>{" "}
+              {selectedProduct.availabilityStatus}
+            </p>
+            <p>
+              <strong>Warranty:</strong> {selectedProduct.warrantyInformation}
+            </p>
+            <p>
+              <strong>Shipping:</strong> {selectedProduct.shippingInformation}
+            </p>
+            <p>
+              <strong>Return Policy:</strong> {selectedProduct.returnPolicy}
+            </p>
           </div>
 
-          <button 
+          <button
             onClick={() => dispatch(addToCart(selectedProduct))}
             className="add-to-cart-btn"
             disabled={selectedProduct.stock === 0}
@@ -94,7 +127,9 @@ const ProductDescription = () => {
                 <span className="review-rating">⭐ {review.rating}</span>
               </div>
               <p className="review-comment">{review.comment}</p>
-              <span className="review-date">{new Date(review.date).toLocaleDateString()}</span>
+              <span className="review-date">
+                {new Date(review.date).toLocaleDateString()}
+              </span>
             </div>
           ))}
         </div>

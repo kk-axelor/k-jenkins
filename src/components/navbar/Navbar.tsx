@@ -3,21 +3,23 @@ import React from "react";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useAuth } from "../../context/AuthContext";
-
-import "./navbar.scss";
 import { toogleCart } from "../../redux/slices/ShoppingCartSlice";
 import { AppDispatch } from "../../redux/store";
-
 import "./navbar.scss";
+import { useTheme } from "../../hooks/useTheme";
+import { Moon, Sun } from "lucide-react";
+import "./navbar.scss";
+
 const Navbar: React.FC = () => {
   const { items } = useAppSelector((state) => state.shoppingCart);
+  const { theme, toogleTheme } = useTheme();
   const dispatch = useAppDispatch();
   const { user, logout } = useAuth();
 
   const cartItemCount = items.length;
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" data-theme={theme}>
       <div className="navbar-brand">
         <Link to="/">Shopping App</Link>
       </div>
@@ -29,6 +31,9 @@ const Navbar: React.FC = () => {
           Shop
         </Link>
         <CartBtn dispatch={dispatch} cartItemCount={cartItemCount} />
+        <button onClick={toogleTheme} className="theme-btn">
+          {theme === "dark" ? <Sun /> : <Moon />}
+        </button>
       </div>
       <div className="navbar-end">
         {user ? (
