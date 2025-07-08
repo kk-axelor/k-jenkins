@@ -43,7 +43,15 @@ const ProductList = () => {
       setFetchMore(false);
       scrollRef.current = false;
     }
-  }, [fetchMore, productStatus, dispatch, skip]);
+  }, [
+    fetchMore,
+    productStatus,
+    dispatch,
+    skip,
+    searchQuery,
+    setFetchMore,
+    scrollRef,
+  ]);
 
   if (productStatus === "failed") {
     return <div>Error: {error}</div>;

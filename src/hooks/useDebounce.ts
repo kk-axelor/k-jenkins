@@ -8,7 +8,7 @@ export const useDebounce = (text: string, time: number) => {
       setDebouseText(text);
     }, time);
     return () => clearTimeout(timer);
-  }, [text]);
+  }, [text, time]);
 
   return debouseText;
 };

@@ -8,9 +8,11 @@ import { fetchProductCategories } from "./redux/slices/ProductSlice";
 import { useTheme } from "./hooks/useTheme";
 
 function Home() {
+  // @typescript-eslint/no-unused-vars
   const [activeCategory, setActiveCategory] = useState("all");
   const dispatch = useAppDispatch();
   const { theme } = useTheme();
+  console.log(activeCategory);
 
   const no_of_item = useAppSelector(
     (state: RootState) => state.shoppingCart.items?.length || 0

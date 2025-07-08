@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./productSearch.scss";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useAppDispatch } from "../../redux/hooks";
@@ -26,7 +26,7 @@ const ProductSearch = () => {
     } else {
       dispatch(fetchProductByQuery(debouceText));
     }
-  }, [debouceText]);
+  }, [debouceText, dispatch]);
 
   return (
     <div className="product-search">

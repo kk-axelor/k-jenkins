@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Product } from "./ShoppingCartSlice";
 import rest from "../../rest/rest";
 import { processUrl } from "../../utils";

@@ -27,7 +27,7 @@ export function SearchBar() {
     } else {
       dispatch(fetchProductByQuery(debouceText));
     }
-  }, [debouceText]);
+  }, [debouceText, dispatch]);
 
   return (
     <div className="relative">
