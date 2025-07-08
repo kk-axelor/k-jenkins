@@ -56,6 +56,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/react-redux": "^7.1.34",
+    "jest-junit": "^16.0.0",
     "msw": "^2.10.3",
     "typescript": "^5.8.3"
   },
