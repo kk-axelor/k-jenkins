@@ -341,4 +341,98 @@ you might get some error while building
 > solution: npm ls ajv
 > npm install --save-dev ajv@^8
 
-"this is test line"
+# Pipelines with jenkins (Very Important)
+
+## Declarative Pipeline Systax
+
+Jenkins support two types for pipeline:
+
+- Declarative -> clean , structured , easy to read
+- Scripted -> more flexible, but verbose and harder for teams
+
+```
+pipeline {
+  agent any   // or specify docker/image/node
+
+  environment {
+    // optional: set environment variables here
+  }
+
+  tools {
+    nodejs 'node18' // if you use NodeJS plugin
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        sh 'npm ci'
+        sh 'npm run build'
+      }
+    }
+
+    stage('Test') {
+      steps {
+        sh 'npm test -- --watchAll=false'
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        echo "Deploy stage (to be implemented)"
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '🎉 Build passed!'
+    }
+    failure {
+      echo '❌ Build failed.'
+    }
+  }
+}
+
+```
+
+**What each block means**
+| Block | Purpose |
+| ---------- | ---------------------------------------------------------------- |
+| `pipeline` | Top-level definition |
+| `agent` | Defines where this runs (e.g. any node, docker container, label) |
+| `tools` | Automatically installs tools (e.g. Node.js) |
+| `stages` | Defines steps like `build`, `test`, `deploy` |
+| `post` | Run actions after build (on success/failure/etc.) |
+
+## parallel Stages in jenkins pipelines:
+
+> Run Test and Lint stages at the same time to save time
+
+**Why Use parallel?**
+Normally , Jenkins runs each stage one after the others
+But some tasks (like testing and linting) dont depend on each other.
+
+- Running the in parallel to save time
+- Jenkins can show both outputs side by side.
+
+**Basic Syntax for Parallel Stages**
+
+```
+stage('Run in Parallel') {
+  parallel {
+    stage('Test') {
+      steps {
+        echo 'Running tests...'
+        sh 'npm test -- --watchAll=false'
+      }
+    }
+    stage('Lint') {
+      steps {
+        echo 'Running linter...'
+        sh 'npm run lint'
+      }
+    }
+  }
+}
+
+```

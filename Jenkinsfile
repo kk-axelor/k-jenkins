@@ -6,7 +6,6 @@ pipeline {
   }
 
   stages {
-    
     stage("Clean install dependencies") {
       steps {
         echo "Cleaning node_modules and lock file"
@@ -21,12 +20,22 @@ pipeline {
         sh "npm i ajv@8.17.1 --legacy-peer-deps"
       }
     }
-
-    stage("Testing") {
-      steps {
-        echo "Running tests..."
-        sh "npm test -- --watchAll=false"
-      }
+  
+    stage("Parallel Checks") {
+      parallel {
+        stage("Test") {
+          steps {
+            echo "Running tests..."
+            sh "npm test -- --watchAll=false"
+          }
+        }
+        stage("Lint") {
+          steps {
+            echo 'Running Lint...'
+            echo "but right now just mock it"
+          }
+        }
+      }  // ← Added missing closing brace for `parallel`
     }
 
     stage("Build") {
@@ -35,7 +44,6 @@ pipeline {
         sh "npm run build"
       }
     }
-
   }
 
   post {
