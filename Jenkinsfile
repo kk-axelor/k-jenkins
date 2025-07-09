@@ -35,7 +35,7 @@ pipeline {
             echo "but right now just mock it"
           }
         }
-      }  // ← Added missing closing brace for `parallel`
+      }  
     }
 
     stage("Build") {
